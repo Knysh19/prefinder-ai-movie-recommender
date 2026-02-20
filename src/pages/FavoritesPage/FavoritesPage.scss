@@ -1,0 +1,48 @@
+.favorites-page {
+  padding-top: 120px; // fixed header
+  padding-bottom: 80px;
+  width: 100vw;
+
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-inline: 32px;
+}
+
+.favorites-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+.favorites-empty {
+  font-size: 1.1rem;
+  opacity: 0.65;
+}
+
+/* 🔥 ГОЛОВНЕ */
+.favorites-grid {
+  display: grid;
+  width: 100vw;
+  grid-template-columns: repeat(auto-fill, 260px);
+  gap: 32px;
+  justify-content: start;
+}
+
+.favorites-grid {
+  animation: fadeUp 0.35s ease;
+}
+
+.favorites-grid .movie-card {
+  margin: 0; // 🔥 КЛЮЧ
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

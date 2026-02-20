@@ -1,0 +1,140 @@
+.movie-card {
+  width: 100%;
+  max-width: 260px;
+  cursor: pointer;
+}
+
+.movie-card__poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+}
+
+.movie-card__meta {
+  margin-top: 10px;
+}
+
+.movie-card__title {
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.movie-card__year {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.movie-card__placeholder {
+  height: 270px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1c1c1c, #2a2a2a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 14px;
+}
+.movie-card__image-wrapper {
+  position: relative;
+}
+
+/* 🖤 кнопка */
+.movie-card__favorite {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(15, 15, 15, 0.55);
+  backdrop-filter: blur(6px);
+  border: none;
+  cursor: pointer;
+  outline: none;
+  box-shadow: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.movie-card__favorite:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* ✨ hover */
+.movie-card__favorite:hover {
+  transform: scale(1.08);
+  background: rgba(30, 30, 30, 0.75);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+/* ❤️ активний стан */
+.movie-card__favorite.active {
+  background: rgba(220, 38, 38, 0.85);
+}
+
+/* 💥 клік */
+.movie-card__favorite:active {
+  transform: scale(0.95);
+}
+
+/* ❤️ саме сердечко */
+.movie-card__favorite .heart {
+  width: 18px;
+  height: 18px;
+  background: transparent;
+  position: relative;
+  transform: rotate(-45deg);
+  transition: background 0.2s ease;
+}
+
+.movie-card__favorite .heart::before,
+.movie-card__favorite .heart::after {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.movie-card__favorite .heart::before {
+  top: -9px;
+  left: 0;
+}
+
+.movie-card__favorite .heart::after {
+  left: 9px;
+  top: 0;
+}
+
+/* ❤️ коли активне */
+.movie-card__favorite.active .heart {
+  background: #fff;
+}
+
+/* 💓 пульс-анімація */
+.movie-card__favorite.active {
+  animation: heart-pop 0.35s ease;
+}
+
+@keyframes heart-pop {
+  0% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

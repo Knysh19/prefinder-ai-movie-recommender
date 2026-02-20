@@ -1,0 +1,370 @@
+body {
+  overflow-x: hidden;
+}
+
+.movie-details {
+  color: #fff;
+  background: #0f1115;
+  min-height: 100vh;
+  font-family: "Inter", system-ui, sans-serif;
+  // position: relative; // 🔥 КЛЮЧОВИЙ РЯДОК
+}
+
+/* ---------------- HERO ---------------- */
+
+.md-hero {
+  position: relative;
+  height: 80vh;
+  background-size: cover;
+  background-position: center;
+}
+
+.md-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to right,
+      #0f1115 25%,
+      rgba(15, 17, 21, 0.2) 60%,
+      #0f1115 100%
+    ),
+    linear-gradient(to top, #0f1115 10%, transparent 60%);
+}
+
+.md-hero__overlay {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 48px;
+  align-items: center;
+  padding: 120px 24px 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.md-poster {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+}
+
+/* ---------------- HERO INFO ---------------- */
+
+.md-hero__info h1 {
+  font-size: 3.2rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+.md-rating {
+  font-size: 1.1rem;
+  color: #f5c518;
+  margin-bottom: 12px;
+}
+
+.md-tagline {
+  font-size: 1.2rem;
+  font-style: italic;
+  opacity: 0.85;
+  margin-bottom: 24px;
+}
+
+.md-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.md-genre {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.85rem;
+  backdrop-filter: blur(6px);
+}
+
+/* ---------------- BACK BUTTON ---------------- */
+
+.md-back {
+  position: fixed;
+  top: 120px;
+  left: 40px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background 0.2s;
+
+  // &:hover {
+  //   background: rgba(255, 255, 255, 0.15);
+  // }
+}
+
+.md-back:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ---------------- OVERVIEW ---------------- */
+
+.md-overview {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 24px 40px;
+  line-height: 1.6;
+}
+
+.md-overview h2 {
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+}
+
+.md-overview p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  opacity: 0.9;
+}
+
+/* ---------------- DETAILS GRID ---------------- */
+
+.md-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+.md-details div {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 16px 20px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  backdrop-filter: blur(6px);
+}
+
+/* ---------------- CAST ---------------- */
+
+.md-cast {
+  padding: 40px 0 60px;
+}
+
+.md-cast h2 {
+  font-size: 1.6rem;
+  margin-left: 40px;
+  margin-bottom: 20px;
+}
+
+.md-cast__list {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 16px 0; /* ⬅️ тільки вертикальний */
+  margin-inline: 30px;
+}
+
+.md-cast__list::-webkit-scrollbar {
+  display: none;
+}
+
+.md-cast__card {
+  min-width: 140px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 12px;
+  text-align: center;
+  transition: transform 0.25s ease;
+}
+
+.md-cast__card:hover {
+  transform: translateY(-6px);
+}
+
+.md-cast__card img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.md-cast__card p {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.md-cast__card span {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+/* ---------------- TRAILER ---------------- */
+
+.md-trailer {
+  max-width: 1000px;
+  margin: 0 auto 80px;
+  padding: 0 24px;
+}
+
+.md-trailer h2 {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+}
+
+.md-trailer iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+}
+
+.md-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 40px;
+}
+
+.md-trailer iframe {
+  width: 100%;
+  height: 315px;
+  border-radius: 12px;
+}
+
+.md-meta {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  span {
+    background: rgba(255, 255, 255, 0.06);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    opacity: 0.9;
+  }
+}
+
+.cast-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden; /* ⬅️ КЛЮЧ */
+}
+
+.cast-list {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 16px 48px;
+}
+
+.cast-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  z-index: 2;
+
+  &.left {
+    left: 8px;
+  }
+  &.right {
+    right: 8px;
+  }
+}
+
+.page-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+/* 🔥 FIX favorites button size & position on details page */
+.md-poster-wrapper {
+  width: 320px;
+  max-width: 100%;
+}
+
+/* ❤️ FAVORITES BUTTON — DETAILS PAGE */
+.md-favorite {
+  margin: 16px 0 8px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+
+  outline: none;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+
+  transition:
+    background 0.25s ease,
+    transform 0.18s ease,
+    box-shadow 0.25s ease;
+}
+
+/* ✨ hover */
+.md-favorite:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+}
+
+/* 💥 click */
+.md-favorite:active {
+  transform: scale(0.96);
+}
+
+/* ❤️ active */
+.md-favorite.active {
+  background: rgba(220, 38, 38, 0.9);
+  box-shadow: 0 10px 30px rgba(220, 38, 38, 0.45);
+}
+
+/* ❌ browser focus */
+.md-favorite:focus,
+.md-favorite:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* ---------------- RESPONSIVE ---------------- */
+
+@media (max-width: 900px) {
+  .md-hero__overlay {
+    grid-template-columns: 1fr;
+    padding: 100px 24px 60px;
+  }
+
+  .md-poster {
+    max-width: 260px;
+    margin-bottom: 24px;
+  }
+
+  .md-cast h2 {
+    margin-left: 24px;
+  }
+
+  .md-cast__list {
+    padding: 0 24px;
+  }
+}

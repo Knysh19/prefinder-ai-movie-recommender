@@ -1,0 +1,27 @@
+
+@mixin on-desktop {
+  @media (min-width: 1200px) {
+    @content;
+  }
+}
+
+// Tablet (medium)
+@mixin on-tablet {
+  @media (min-width: 768px) and (max-width: 1199px) {
+    @content;
+  }
+}
+
+// Mobile (small)
+@mixin on-mobile {
+  @media (max-width: 767px) {
+    @content;
+  }
+}
+
+/* Optional helper: ultra-wide monitors (21:9 and above) */
+@mixin on-ultrawide {
+  @media (min-aspect-ratio: 21/9) {
+    @content;
+  }
+}

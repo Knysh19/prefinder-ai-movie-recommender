@@ -1,0 +1,42 @@
+/* PAGE */
+.results-page {
+  padding-top: 130px; // ⬅️ єдиний контрольний відступ від верху
+}
+
+/* BACK BUTTON */
+.results-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 40px;
+
+  /* ⬇️ КЕРУЄ ВІДСТУПОМ ДО КАРТОК */
+  margin-bottom: -25px;
+
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+
+  padding: 8px 14px;
+
+  color: #bbb;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.results-page__back:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  transform: translateX(-2px);
+}
+
+.results-page__back:active {
+  transform: translateX(-1px);
+}
