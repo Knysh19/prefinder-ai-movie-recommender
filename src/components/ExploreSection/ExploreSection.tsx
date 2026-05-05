@@ -4,6 +4,7 @@ import "./ExploreSection.scss";
 
 const GAP = 32;
 const CARD_WIDTH = 260;
+const API_BASE_URL = "https://prefinder-ai-movie-recommender.onrender.com/api";
 
 type ExploreSectionProps = {
   title: string;
@@ -40,7 +41,7 @@ export function ExploreSection({
           params.append("extraQuery", extraQuery);
         }
 
-        const res = await fetch(`/api/movie/explore?${params.toString()}`);
+        const res = await fetch(`${API_BASE_URL}/movie/explore?${params.toString()}`)
 
         if (!res.ok) {
           throw new Error("Explore fetch failed");
