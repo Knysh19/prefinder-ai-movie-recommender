@@ -23,7 +23,7 @@ export type RecommendationsResponse = {
   results: Movie[];
 };
 
-const API_BASE_URL = "/api";
+const API_BASE_URL = "https://prefinder-ai-movie-recommender.onrender.com/api";
 
 export async function getRecommendations(
   userPrompt: string,
