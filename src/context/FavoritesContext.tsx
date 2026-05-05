@@ -23,8 +23,16 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   // init from localStorage
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      setFavorites(JSON.parse(stored));
+
+    if (!stored) return;
+
+    try {
+      const parsed: Movie[] = JSON.parse(stored);
+      setFavorites(parsed);
+    } catch (error) {
+      console.error("Invalid favorites in localStorage", error);
+      localStorage.removeItem(STORAGE_KEY);
+      setFavorites([]);
     }
   }, []);
 

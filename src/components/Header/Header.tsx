@@ -7,7 +7,7 @@ import {
   isAuthenticated,
   getAuthUser,
   logout,
-} from "../../../backend/src/utils/auth";
+} from "../../utils/auth";
 
 export function Header(): JSX.Element {
   const navigate = useNavigate();

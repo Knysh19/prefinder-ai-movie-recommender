@@ -1,14 +1,18 @@
 import Groq from "groq-sdk";
+import type { Movie } from "./tmdbService";
+
+type MovieForRanking = Movie;
+
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+
+if (!GROQ_API_KEY) {
+  throw new Error("Missing GROQ_API_KEY in environment variables");
+}
 
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY!,
+  apiKey: GROQ_API_KEY,
 });
 
-type MovieForRanking = {
-  id: number;
-  title: string;
-  overview: string;
-};
 
 type RankedMovie = MovieForRanking & {
   score: number;
@@ -16,7 +20,7 @@ type RankedMovie = MovieForRanking & {
 
 export async function rerankMoviesByQuery(
   query: string,
-  movies: MovieForRanking[]
+  movies: MovieForRanking[],
 ): Promise<RankedMovie[]> {
   if (movies.length === 0) return [];
 
@@ -40,7 +44,7 @@ ${shortlist
   .map(
     (m) => `ID: ${m.id}
 Title: ${m.title}
-Overview: ${m.overview}`
+Overview: ${m.overview}`,
   )
   .join("\n\n")}
 `;
@@ -55,7 +59,23 @@ Overview: ${m.overview}`
     const raw = completion.choices[0]?.message?.content ?? "";
     const cleaned = raw.replace(/```json|```/g, "").trim();
 
-    const parsed: unknown = JSON.parse(cleaned);
+    let parsed: unknown;
+
+    try {
+      const firstBracket = cleaned.indexOf("[");
+      const lastBracket = cleaned.lastIndexOf("]");
+
+      if (firstBracket === -1 || lastBracket === -1) {
+        throw new Error("No JSON array found in AI response");
+      }
+
+      const jsonSubstring = cleaned.slice(firstBracket, lastBracket + 1);
+
+      parsed = JSON.parse(jsonSubstring);
+    } catch (error) {
+      console.error("Invalid JSON from AI rerank:", cleaned);
+      throw error;
+    }
 
     if (!Array.isArray(parsed)) {
       throw new Error("Invalid rerank response");
@@ -68,11 +88,15 @@ Overview: ${m.overview}`
         typeof item === "object" &&
         item !== null &&
         "id" in item &&
-        "score" in item &&
-        typeof (item as any).id === "number" &&
-        typeof (item as any).score === "number"
+        "score" in item
       ) {
-        scoreMap.set((item as any).id, (item as any).score);
+        const id = Number((item as any).id);
+        const rawScore = Number((item as any).score);
+
+        if (!Number.isNaN(id) && !Number.isNaN(rawScore)) {
+          const normalizedScore = Math.max(0, Math.min(100, rawScore));
+          scoreMap.set(id, normalizedScore);
+        }
       }
     }
 
@@ -82,8 +106,9 @@ Overview: ${m.overview}`
     }));
 
     return ranked.sort((a, b) => b.score - a.score);
-  } catch {
-    // fallback — без rerank, але стабільно
+  } catch (error) {
+    console.error("AI rerank failed:", error);
+
     return movies.slice(0, 25).map((m) => ({
       ...m,
       score: 0,

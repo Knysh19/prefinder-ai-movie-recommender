@@ -1,7 +1,13 @@
 import Groq from "groq-sdk";
 
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+
+if (!GROQ_API_KEY) {
+  throw new Error("Missing GROQ_API_KEY in environment variables");
+}
+
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY!,
+  apiKey: GROQ_API_KEY,
 });
 
 export type AIPreferences = {
@@ -14,8 +20,9 @@ export type AIPreferences = {
 };
 
 export async function analyzeUserQuery(
-  userText: string
+  userText: string,
 ): Promise<AIPreferences> {
+  const currentYear = new Date().getFullYear();
   const prompt = `
 You are an AI that analyzes user movie search intent.
 
@@ -40,7 +47,7 @@ The JSON MUST contain EXACTLY these fields:
 
 STRICT REQUIREMENTS:
 - keywords MUST contain at least 5 items
-- yearRange MUST be a valid range between 1950 and 2025
+- yearRange MUST be a valid range between 1950 and ${currentYear}
 - If the user input is vague, infer reasonable details instead of staying generic
 - Prefer specificity over popularity
 
@@ -70,5 +77,24 @@ User input:
     .replace(/```/g, "")
     .trim();
 
-  return JSON.parse(cleaned);
+  let parsed: unknown;
+
+  try {
+    parsed = JSON.parse(cleaned);
+  } catch (err) {
+    console.error("Invalid JSON from Groq:", cleaned);
+    throw new Error("AI returned invalid JSON");
+  }
+
+  if (
+    typeof parsed !== "object" ||
+    parsed === null ||
+    !Array.isArray((parsed as any).genres) ||
+    !Array.isArray((parsed as any).keywords) ||
+    typeof (parsed as any).yearRange !== "string"
+  ) {
+    throw new Error("AI response has invalid structure");
+  }
+
+  return parsed as AIPreferences;
 }

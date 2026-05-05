@@ -2,9 +2,6 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { MovieCard } from "../MovieCard/MovieCard";
 import "./ExploreSection.scss";
 
-const API_URL = "https://api.themoviedb.org/3";
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-
 const GAP = 32;
 const CARD_WIDTH = 260;
 
@@ -35,12 +32,21 @@ export function ExploreSection({
       try {
         setIsLoading(true);
 
-        let url = `${API_URL}${endpoint}?api_key=${API_KEY}`;
-        if (extraQuery) url += `&${extraQuery}`;
+        const params = new URLSearchParams({
+          endpoint,
+        });
 
-        const res = await fetch(url);
+        if (extraQuery) {
+          params.append("extraQuery", extraQuery);
+        }
+
+        const res = await fetch(`/api/movie/explore?${params.toString()}`);
+
+        if (!res.ok) {
+          throw new Error("Explore fetch failed");
+        }
+
         const data = await res.json();
-
         setMovies(data.results || []);
       } catch (e) {
         console.error("Explore fetch error:", e);

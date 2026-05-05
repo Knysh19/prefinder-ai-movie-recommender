@@ -7,6 +7,7 @@ import {
 import { rerankMoviesByQuery } from "../services/aiRerankService";
 
 const router = Router();
+const cache = new Map<string, any>();
 
 /* =========================
    VARIATION LAYER
@@ -48,7 +49,13 @@ router.post("/", async (req, res) => {
     }
 
     const cacheKey = query.trim().toLowerCase();
-
+    if (cache.has(cacheKey)) {
+      return res.json({
+        preferences: null,
+        results: cache.get(cacheKey),
+        cached: true,
+      });
+    }
 
     //  2. AI ANALYSIS
     const preferences = await analyzeUserQuery(query);
@@ -71,6 +78,7 @@ router.post("/", async (req, res) => {
     const withImages = await enrichMoviesWithImages(finalList);
 
     // 8. RESPONSE
+    cache.set(cacheKey, withImages);
     res.json({
       preferences,
       results: withImages,

@@ -23,12 +23,12 @@ export type RecommendationsResponse = {
   results: Movie[];
 };
 
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = "/api";
 
 export async function getRecommendations(
-  userPrompt: string
+  userPrompt: string,
 ): Promise<RecommendationsResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/recommendations`, {
+  const response = await fetch(`${API_BASE_URL}/recommendations`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query: userPrompt }),

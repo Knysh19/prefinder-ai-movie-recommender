@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../../backend/src/utils/auth";
+import { login } from "../../utils/auth";
 import "./LoginPage.scss";
 
 export function LoginPage() {
