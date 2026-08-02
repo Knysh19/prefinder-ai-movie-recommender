@@ -3,8 +3,8 @@ import {
   useContext,
   useEffect,
   useState,
-  ReactNode,
 } from "react";
+import type { ReactNode } from "react";
 import type { Movie } from "../components/MovieCard/MovieCard";
 
 type FavoritesContextType = {
@@ -18,23 +18,20 @@ const FavoritesContext = createContext<FavoritesContextType | null>(null);
 const STORAGE_KEY = "favoriteMovies";
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
-  const [favorites, setFavorites] = useState<Movie[]>([]);
-
-  // init from localStorage
-  useEffect(() => {
+  const [favorites, setFavorites] = useState<Movie[]>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
 
-    if (!stored) return;
+    if (!stored) return [];
 
     try {
-      const parsed: Movie[] = JSON.parse(stored);
-      setFavorites(parsed);
+      const parsed: unknown = JSON.parse(stored);
+      return Array.isArray(parsed) ? (parsed as Movie[]) : [];
     } catch (error) {
       console.error("Invalid favorites in localStorage", error);
       localStorage.removeItem(STORAGE_KEY);
-      setFavorites([]);
+      return [];
     }
-  }, []);
+  });
 
   // sync to localStorage
   useEffect(() => {
@@ -60,6 +57,8 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// The hook stays in this module to preserve the project's original public API.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useFavorites() {
   const context = useContext(FavoritesContext);
   if (!context) {

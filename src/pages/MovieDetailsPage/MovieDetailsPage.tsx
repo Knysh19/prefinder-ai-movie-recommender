@@ -4,13 +4,41 @@ import { getMovieFull } from "../../api/movie";
 import { useFavorites } from "../../context/FavoritesContext";
 import "./MovieDetailsPage.scss";
 
+type Genre = { id: number; name: string };
+type Actor = {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string | null;
+};
+type MovieDetails = {
+  id: number;
+  title: string;
+  overview: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  release_date: string;
+  vote_average: number;
+  vote_count: number;
+  tagline: string;
+  genres: Genre[];
+  runtime: number;
+  production_countries?: Array<{ name: string }>;
+  original_language?: string;
+};
+type MovieFullResponse = {
+  movie: MovieDetails;
+  cast: Actor[];
+  trailer: { key: string } | null;
+};
+
 export function MovieDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const { isFavorite, toggleFavorite } = useFavorites();
 
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<MovieFullResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -68,7 +96,7 @@ export function MovieDetailsPage() {
             <p className="md-tagline">{movie.tagline}</p>
 
             <div className="md-genres">
-              {movie.genres.map((g: any) => (
+              {movie.genres.map((g) => (
                 <span key={g.id} className="md-genre">
                   {g.name}
                 </span>
@@ -107,7 +135,7 @@ export function MovieDetailsPage() {
       <section className="md-cast">
         <h2>Cast</h2>
         <div className="md-cast__list" ref={listRef}>
-          {cast.slice(0, 10).map((actor: any) => (
+          {cast.slice(0, 10).map((actor) => (
             <div key={actor.id} className="md-cast__card">
               {actor.profile_path && (
                 <img

@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { MovieCard } from "../MovieCard/MovieCard";
+import type { Movie } from "../MovieCard/MovieCard";
+import { API_BASE_URL } from "../../api/config";
 import "./ExploreSection.scss";
 
 const GAP = 32;
 const CARD_WIDTH = 260;
-const API_BASE_URL = "https://prefinder-ai-movie-recommender.onrender.com/api";
-
 type ExploreSectionProps = {
   title: string;
   endpoint: string;
@@ -17,7 +17,7 @@ export function ExploreSection({
   endpoint,
   extraQuery,
 }: ExploreSectionProps) {
-  const [movies, setMovies] = useState<any[]>([]);
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const containerRef = useRef<HTMLDivElement | null>(null);

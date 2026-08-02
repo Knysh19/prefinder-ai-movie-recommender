@@ -1,73 +1,100 @@
-# React + TypeScript + Vite
+# PreFinder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+PreFinder is a production-oriented AI movie discovery experience. Describe a mood,
+plot, theme, decade, or a movie you already enjoy; the API turns that intent into
+structured preferences, discovers candidates from TMDB, and reranks them for the
+request.
 
-Currently, two official plugins are available:
+## Highlights
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Natural-language movie recommendations powered by Groq and TMDB
+- Trending, top-rated, popular, and genre collections
+- Responsive movie details and local favorites
+- Rate-limited API with CORS allowlisting, bounded TTL cache, input validation, and upstream timeouts
 
-## React Compiler
+## Architecture
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+Browser (React + Vite)
+  |-- /api/recommendations --> intent analysis (Groq)
+  |                            |-- candidate discovery (TMDB)
+  |                            `-- semantic reranking (Groq)
+  `-- /api/movie/* ----------> TMDB proxy with validation and caching headers
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The backend keeps all provider credentials server-side. The frontend uses the
+deployed PreFinder API by default. `VITE_API_BASE_URL` can override that endpoint.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Local development
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Requirements: Node.js 20+ and npm.
+
+```bash
+npm ci
+npm --prefix backend ci
 ```
+
+The quickest frontend-only start uses the deployed API:
+
+```bash
+npm run dev
+```
+
+To run the complete stack locally, copy both example environment files, add your
+provider keys, and set `VITE_API_BASE_URL=/api` in the root `.env`. Then run the
+backend and frontend in separate terminals:
+
+```bash
+copy .env.example .env
+copy backend\.env.example backend\.env
+npm --prefix backend run dev
+npm run dev
+```
+
+Frontend: `http://localhost:5173`
+API health: `http://localhost:3001/health`
+
+## Verification
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+npm --prefix backend test
+```
+
+The same checks run in GitHub Actions.
+
+## Deployment
+
+### Frontend
+
+Build command: `npm run build`
+Output directory: `dist`
+Set `VITE_API_BASE_URL` to the public backend URL ending in `/api`.
+
+`vercel.json` includes the SPA rewrite required for direct route navigation.
+
+### Backend
+
+Root directory: `backend`
+Build command: `npm ci && npm run build`
+Start command: `npm start`
+
+Required environment variables:
+
+- `GROQ_API_KEY`
+- `TMDB_API_KEY`
+- `FRONTEND_URL` — comma-separated allowed origins
+- `PORT` — supplied by most hosting platforms
+- `RECOMMENDATION_RATE_LIMIT` — optional, defaults to 10 requests/minute/IP
+
+## Privacy and data
+
+PreFinder does not send the local profile email to a server. The profile label and
+favorites live in localStorage. Recommendation results live in sessionStorage for
+the current browser session. Movie data and images come from TMDB.
+
+## Credits
+
+This product uses the TMDB API but is not endorsed or certified by TMDB.

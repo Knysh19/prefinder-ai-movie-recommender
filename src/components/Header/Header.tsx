@@ -1,4 +1,3 @@
-import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Header.scss";
 import logoImage from "../../../public/images/ilustr.png";
@@ -9,7 +8,7 @@ import {
   logout,
 } from "../../utils/auth";
 
-export function Header(): JSX.Element {
+export function Header() {
   const navigate = useNavigate();
   const user = getAuthUser();
 

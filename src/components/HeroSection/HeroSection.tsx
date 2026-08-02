@@ -1,10 +1,9 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import "./HeroSection.scss";
 import { useNavigate } from "react-router-dom";
 
 import { MicroStars } from "../MicroStars/MicroStars";
 import { getRecommendations } from "../../api/recommendations";
-import { ResultsSection } from "../ResultsSection/ResultsSection";
 
 import blackHole28 from "../../../public/output_28.webm";
 import imgHorror from "../../../public/images/horror.jpg";
@@ -13,11 +12,10 @@ import imgComedy from "../../../public/images/komedia.jpg";
 import imgDrama from "../../../public/images/drama.jpg";
 import imgIllustration from "../../../public/images/heroPagelogo.png";
 
-export function HeroSection(): JSX.Element {
+export function HeroSection() {
   const [query, setQuery] = useState<string>("");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -60,15 +58,17 @@ export function HeroSection(): JSX.Element {
 
     try {
       setLoading(true);
-      setError(null);
 
       const data = await getRecommendations(query);
 
-      localStorage.setItem("lastResults", JSON.stringify(data));
+      sessionStorage.setItem(
+        "prefinder:lastResults",
+        JSON.stringify(data.results),
+      );
 
       navigate(`/results?query=${encodeURIComponent(query)}`);
-    } catch (e) {
-      setError("Failed to get recommendations 😢");
+    } catch (error) {
+      console.error("Recommendation search failed", error);
     } finally {
       setLoading(false);
     }
@@ -138,9 +138,9 @@ export function HeroSection(): JSX.Element {
                 aria-label="Search by prompt"
               />
               <button
+                type="submit"
                 className="hero__search-btn"
                 aria-label="Search"
-                onClick={handleSearch}
               >
                 {loading ? "Searching..." : "Search"}
               </button>
@@ -168,9 +168,6 @@ export function HeroSection(): JSX.Element {
                   className="preset-card"
                   onClick={() => applyPreset(p.prompt)}
                   aria-pressed={query === p.prompt}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") applyPreset(p.prompt);
-                  }}
                 >
                   <div className="preset-card__img">
                     <img

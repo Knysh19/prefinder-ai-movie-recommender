@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://prefinder-ai-movie-recommender.onrender.com/api";
+import { API_BASE_URL } from "./config";
 
 export async function getMovieFull(id: string) {
   const res = await fetch(`${API_BASE_URL}/movie/${id}/full`);

@@ -1,92 +1,58 @@
 import { Router } from "express";
 import { analyzeUserQuery } from "../services/aiService";
-import {
-  getMoviesFromTMDB,
-  enrichMoviesWithImages,
-} from "../services/tmdbService";
+import type { AIPreferences } from "../services/aiService";
+import { getMoviesFromTMDB } from "../services/tmdbService";
+import type { Movie } from "../services/tmdbService";
 import { rerankMoviesByQuery } from "../services/aiRerankService";
+import { TTLCache } from "../utils/ttlCache";
+import { validateRecommendationQuery } from "../utils/validation";
+
+type RecommendationPayload = {
+  preferences: AIPreferences;
+  results: Movie[];
+};
 
 const router = Router();
-const cache = new Map<string, any>();
+const cache = new TTLCache<RecommendationPayload>(200, 6 * 60 * 60 * 1000);
+const inFlight = new Map<string, Promise<RecommendationPayload>>();
 
-/* =========================
-   VARIATION LAYER
-========================= */
-
-function pickWithVariation<T>(items: T[], total: number): T[] {
-  if (items.length <= total) return items;
-
-  const result: T[] = [];
-
-  const top = items.slice(0, 15);
-  const middle = items.slice(15, 30);
-
-  result.push(...top.slice(0, 6));
-
-  if (middle.length > 0) {
-    result.push(...middle.slice(0, 5));
-  }
-
-  const remaining = items.filter((m) => !result.includes(m));
-
-  while (result.length < total && remaining.length > 0) {
-    const index = Math.floor(Math.random() * remaining.length);
-    result.push(remaining.splice(index, 1)[0]);
-  }
-
-  return result;
+async function buildRecommendations(query: string): Promise<RecommendationPayload> {
+  const preferences = await analyzeUserQuery(query);
+  const candidates = await getMoviesFromTMDB(preferences);
+  if (!candidates.length) return { preferences, results: [] };
+  const ranked = await rerankMoviesByQuery(query, candidates);
+  return { preferences, results: ranked.slice(0, 15) };
 }
 
-/* =========================
-   ROUTE
-========================= */
-
 router.post("/", async (req, res) => {
+  const validation = validateRecommendationQuery(req.body);
+  if (!validation.ok) return res.status(400).json({ error: validation.error, results: [] });
+
+  const cacheKey = validation.query.toLocaleLowerCase();
+  const cached = cache.get(cacheKey);
+  if (cached) return res.json({ ...cached, cached: true });
+
+  let request = inFlight.get(cacheKey);
+  if (!request) {
+    request = buildRecommendations(validation.query);
+    inFlight.set(cacheKey, request);
+  }
+
   try {
-    const { query } = req.body;
-    if (!query || typeof query !== "string") {
-      return res.json({ results: [] });
-    }
-
-    const cacheKey = query.trim().toLowerCase();
-    if (cache.has(cacheKey)) {
-      return res.json({
-        preferences: null,
-        results: cache.get(cacheKey),
-        cached: true,
-      });
-    }
-
-    //  2. AI ANALYSIS
-    const preferences = await analyzeUserQuery(query);
-
-    //  3. TMDB
-    const rawMovies = await getMoviesFromTMDB(preferences);
-    if (!rawMovies.length) {
-      return res.json({ preferences, results: [] });
-    }
-
-    //  4. RERANK
-    const ranked = await rerankMoviesByQuery(query, rawMovies);
-
-    const finalList =
-      ranked.length > 0
-        ? pickWithVariation(ranked, 15)
-        : rawMovies.slice(0, 15).map((m) => ({ ...m, score: 0 }));
-
-    //  6. IMAGES
-    const withImages = await enrichMoviesWithImages(finalList);
-
-    // 8. RESPONSE
-    cache.set(cacheKey, withImages);
-    res.json({
-      preferences,
-      results: withImages,
-      cached: false,
+    const payload = await request;
+    cache.set(cacheKey, payload);
+    return res.json({ ...payload, cached: false });
+  } catch (error) {
+    console.error(
+      "Recommendation pipeline failed",
+      error instanceof Error ? error.message : error,
+    );
+    return res.status(503).json({
+      error: "The recommendation service is temporarily unavailable.",
+      results: [],
     });
-  } catch (e) {
-    console.error("❌ Recommendation error:", e);
-    res.status(500).json({ results: [] });
+  } finally {
+    if (inFlight.get(cacheKey) === request) inFlight.delete(cacheKey);
   }
 });
 

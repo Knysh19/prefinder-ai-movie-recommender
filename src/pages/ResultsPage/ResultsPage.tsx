@@ -2,6 +2,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getRecommendations } from "../../api/recommendations";
 import { ResultsSection } from "../../components/ResultsSection/ResultsSection";
+import type { Movie } from "../../components/MovieCard/MovieCard";
 import "./ResultsPage.scss";
 
 const STORAGE_KEY = "prefinder:lastResults";
@@ -12,7 +13,7 @@ export function ResultsPage() {
 
   const query = params.get("query");
 
-  const [movies, setMovies] = useState<any[] | null>(null);
+  const [movies, setMovies] = useState<Movie[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,6 +22,7 @@ export function ResultsPage() {
       navigate("/");
       return;
     }
+    const searchQuery = query;
 
     // ✅ 1. ПРОБУЄМО ВІДНОВИТИ З SESSION STORAGE
     const cached = sessionStorage.getItem(STORAGE_KEY);
@@ -44,7 +46,7 @@ export function ResultsPage() {
         setLoading(true);
         setError(null);
 
-        const data = await getRecommendations(query);
+        const data = await getRecommendations(searchQuery);
 
         if (!cancelled) {
           setMovies(data.results);

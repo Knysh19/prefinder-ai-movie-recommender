@@ -1,5 +1,7 @@
 // src/api/recommendations.ts
 
+import { API_BASE_URL } from "./config";
+
 export type AiPreferences = {
   genres: string[];
   moods: string[];
@@ -22,8 +24,6 @@ export type RecommendationsResponse = {
   preferences: AiPreferences;
   results: Movie[];
 };
-
-const API_BASE_URL = "https://prefinder-ai-movie-recommender.onrender.com/api";
 
 export async function getRecommendations(
   userPrompt: string,
