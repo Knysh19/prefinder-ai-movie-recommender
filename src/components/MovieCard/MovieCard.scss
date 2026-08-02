@@ -65,9 +65,14 @@
     box-shadow 0.2s ease;
 }
 
-.movie-card__favorite:focus {
+.movie-card__favorite:focus:not(:focus-visible) {
   outline: none;
   box-shadow: none;
+}
+
+.movie-card__favorite:focus-visible {
+  outline: 3px solid #ffd700;
+  outline-offset: 3px;
 }
 
 /* ✨ hover */
@@ -136,5 +141,34 @@
   }
   100% {
     transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .movie-card__poster {
+    border-radius: 12px;
+  }
+
+  .movie-card__meta {
+    margin-top: 8px;
+  }
+
+  .movie-card__title {
+    margin: 0 0 4px;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .movie-card__year {
+    font-size: 11px;
+  }
+
+  .movie-card__favorite {
+    top: 8px;
+    right: 8px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    font-size: 15px;
   }
 }

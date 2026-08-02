@@ -30,7 +30,7 @@
 .explore-controls {
   display: flex;
   gap: 12px;
-  margin-right: 100px;
+  margin-right: 0;
 }
 
 .explore-controls button {
@@ -77,7 +77,17 @@
 /* ===== VIEWPORT ===== */
 .explore-viewport {
   width: 100%;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 1px;
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.explore-viewport::-webkit-scrollbar {
+  display: none;
 }
 
 /* ===== TRACK ===== */
@@ -86,14 +96,14 @@
   gap: 32px;
 
   width: max-content; // ❗ трек великий
-  transition: transform 0.35s ease;
-  will-change: transform;
 }
 
 /* ===== SLIDE ===== */
 .explore-slide {
   flex: 0 0 auto;
   width: 260px;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 /* ===== SKELETON ===== */
@@ -102,4 +112,45 @@
   height: 390px;
   border-radius: 16px;
   background: linear-gradient(135deg, #1c1c1c, #2a2a2a);
+}
+
+@media (max-width: 768px) {
+  .explore-section {
+    padding: 22px 16px;
+  }
+
+  .explore-header {
+    margin-bottom: 16px;
+    gap: 12px;
+  }
+
+  .explore-section__title {
+    margin: 0;
+    font-size: 21px;
+    line-height: 1.25;
+  }
+
+  .explore-controls {
+    flex: 0 0 auto;
+    gap: 8px;
+  }
+
+  .explore-controls button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .explore-track {
+    gap: 16px;
+  }
+
+  .explore-slide,
+  .movie-skeleton {
+    width: min(72vw, 260px);
+  }
+
+  .movie-skeleton {
+    height: auto;
+    aspect-ratio: 2 / 3;
+  }
 }

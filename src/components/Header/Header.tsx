@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Header.scss";
 import logoImage from "../../../public/images/ilustr.png";
@@ -11,8 +12,21 @@ import {
 export function Header() {
   const navigate = useNavigate();
   const user = getAuthUser();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
 
   function handleLogout() {
+    setMenuOpen(false);
     logout();
     navigate("/");
     window.location.reload(); // просте оновлення стану
@@ -22,16 +36,42 @@ export function Header() {
     <header className="site-header" role="banner">
       <div className="site-header__inner">
         <div className="site-header__brand">
-          <Link to="/" className="logo-wrap">
-            <img src={logoImage} alt="logo" className="logo-image" />
+          <Link to="/" className="logo-wrap" onClick={() => setMenuOpen(false)}>
+            <img src={logoImage} alt="PreFinder" className="logo-image" />
           </Link>
         </div>
 
-        <nav className="site-header__nav" role="navigation" aria-label="Main">
-          <Link to="/explore" className="nav__btn nav__btn--ghost">
+        <button
+          type="button"
+          className={`nav-toggle ${menuOpen ? "is-open" : ""}`}
+          aria-expanded={menuOpen}
+          aria-controls="main-navigation"
+          aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+
+        <nav
+          id="main-navigation"
+          className={`site-header__nav ${menuOpen ? "is-open" : ""}`}
+          role="navigation"
+          aria-label="Main"
+        >
+          <Link
+            to="/explore"
+            className="nav__btn nav__btn--ghost"
+            onClick={() => setMenuOpen(false)}
+          >
             Explore
           </Link>
-          <Link to="/favorites" className="nav__btn nav__btn--ghost">
+          <Link
+            to="/favorites"
+            className="nav__btn nav__btn--ghost"
+            onClick={() => setMenuOpen(false)}
+          >
             ❤️ Favorites
           </Link>
 
@@ -39,6 +79,7 @@ export function Header() {
             <div className="nav__user">
               <span className="nav__email">{user.email}</span>
               <button
+                type="button"
                 className="nav__btn nav__btn--primary"
                 onClick={handleLogout}
               >
@@ -47,8 +88,12 @@ export function Header() {
             </div>
           ) : (
             <button
+              type="button"
               className="nav__btn nav__btn--primary"
-              onClick={() => navigate("/login")}
+              onClick={() => {
+                setMenuOpen(false);
+                navigate("/login");
+              }}
             >
               Sign in
             </button>

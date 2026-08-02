@@ -46,3 +46,37 @@
     transform: translateY(0);
   }
 }
+
+@media (max-width: 768px) {
+  .favorites-page {
+    padding: calc(96px + env(safe-area-inset-top)) 16px
+      calc(48px + env(safe-area-inset-bottom));
+  }
+
+  .favorites-title {
+    margin: 0 0 24px;
+    font-size: clamp(1.65rem, 8vw, 2rem);
+    line-height: 1.2;
+  }
+
+  .favorites-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 16px;
+  }
+
+  .favorites-empty {
+    max-width: 280px;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+}
+
+@media (max-width: 380px) {
+  .favorites-page {
+    padding-inline: 12px;
+  }
+
+  .favorites-grid {
+    gap: 18px 12px;
+  }
+}

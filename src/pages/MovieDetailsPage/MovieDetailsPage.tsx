@@ -125,6 +125,8 @@ export function MovieDetailsPage() {
             <h2>Trailer</h2>
             <iframe
               src={`https://www.youtube.com/embed/${trailer.key}`}
+              title={`${movie.title} trailer`}
+              loading="lazy"
               allowFullScreen
             />
           </div>

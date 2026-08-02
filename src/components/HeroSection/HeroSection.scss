@@ -179,6 +179,19 @@ $hero-max-width: 1600px;
   box-shadow: 0 0 0 4px rgba(120, 165, 255, 0.3), 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
+.hero__search-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: translateY(-50%);
+  box-shadow: none;
+}
+
+.hero__search-btn:disabled:hover,
+.hero__search-btn:disabled:active {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-50%);
+}
+
 /* optional: dark mode tweak if you want cooler tint */
 .hero__search-btn--cool {
   background: linear-gradient(
@@ -364,6 +377,153 @@ $hero-max-width: 1600px;
   }
 }
 
+@media (max-width: 768px) {
+  .hero__howit {
+    max-width: 360px;
+    margin: 0 auto 14px;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    height: auto;
+    min-height: 100svh;
+    padding: calc(68px + env(safe-area-inset-top)) 16px
+      calc(48px + env(safe-area-inset-bottom));
+    align-items: flex-start;
+  }
+
+  .hero__content {
+    height: auto;
+    max-width: 520px;
+    padding-top: 24px;
+  }
+
+  .hero__left {
+    width: 100%;
+    min-width: 0;
+    margin: 0 auto;
+    gap: 28px;
+  }
+
+  .image-illustration {
+    width: min(82vw, 360px);
+    margin: 0 auto;
+  }
+
+  .hero__howit {
+    max-width: 360px;
+    margin: 0 auto;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .howit__text {
+    margin: 0;
+  }
+
+  .hero__search {
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto;
+    padding: 3px;
+  }
+
+  .hero__search .hero__search-input {
+    width: 100%;
+    min-width: 0;
+    height: 52px;
+    padding: 13px 104px 13px 16px;
+    font-size: 16px;
+  }
+
+  .hero__search .hero__search-btn {
+    right: 4px;
+    height: 46px;
+    min-width: 88px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+
+  .hero__suggestions {
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .suggestions__list {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .suggestion-btn {
+    min-height: 38px;
+    padding: 7px 10px;
+    font-size: 12px;
+    line-height: 1.25;
+  }
+
+  .hero__presets {
+    display: grid;
+    width: min(100%, 380px);
+    margin-top: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .preset-card {
+    width: 100%;
+    min-height: 0;
+    padding: 9px;
+    gap: 4px;
+    border-radius: 16px;
+  }
+
+  .preset-card__img {
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    margin-bottom: 4px;
+    aspect-ratio: 1;
+    border-radius: 11px;
+  }
+
+  .preset-card__title {
+    margin-top: 2px;
+    font-size: 13px;
+  }
+
+  .preset-card:hover,
+  .preset-card[aria-pressed="true"] {
+    transform: none;
+  }
+
+  .hero__blackhole {
+    display: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero {
+    min-height: 100svh;
+    padding-inline: 12px;
+  }
+
+  .hero__content {
+    padding-top: 18px;
+  }
+
+  .suggestion-btn {
+    padding-inline: 8px;
+    font-size: 11px;
+  }
+}
+
 /* ---------------- How it works + CTA + examples ---------------- */
 .hero__howit {
   display: flex;
@@ -500,4 +660,21 @@ $hero-max-width: 1600px;
   }
 }
 
+/* Keep the mobile rules last: legacy desktop selectors above have equal specificity. */
+@media (max-width: 768px) {
+  .hero__howit {
+    max-width: 360px;
+    margin: 0 auto;
+    font-size: 13px;
+    line-height: 1.45;
+  }
 
+  .hero__search .hero__search-input {
+    max-width: none;
+  }
+
+  .preset-card:hover,
+  .preset-card[aria-pressed="true"] {
+    transform: none;
+  }
+}

@@ -95,3 +95,35 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+@media (max-width: 768px) {
+  .results {
+    padding: 8px 16px 32px;
+  }
+
+  .results__title {
+    margin: 12px 0 20px;
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  .results__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 16px;
+  }
+
+  .results__status {
+    padding: 40px 12px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 380px) {
+  .results {
+    padding-inline: 12px;
+  }
+
+  .results__grid {
+    gap: 18px 12px;
+  }
+}

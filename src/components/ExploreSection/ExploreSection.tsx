@@ -1,11 +1,9 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MovieCard } from "../MovieCard/MovieCard";
 import type { Movie } from "../MovieCard/MovieCard";
 import { API_BASE_URL } from "../../api/config";
 import "./ExploreSection.scss";
 
-const GAP = 32;
-const CARD_WIDTH = 260;
 type ExploreSectionProps = {
   title: string;
   endpoint: string;
@@ -19,16 +17,14 @@ export function ExploreSection({
 }: ExploreSectionProps) {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const startIndexRef = useRef(0);
-
-  const [startIndex, setStartIndex] = useState(0);
-  const [visibleCount, setVisibleCount] = useState(4);
-  const [translatePx, setTranslatePx] = useState(0);
+  const [canScrollBack, setCanScrollBack] = useState(false);
+  const [canScrollForward, setCanScrollForward] = useState(false);
 
   /* ================= FETCH ================= */
   useEffect(() => {
+    const controller = new AbortController();
+
     async function fetchMovies() {
       try {
         setIsLoading(true);
@@ -41,7 +37,10 @@ export function ExploreSection({
           params.append("extraQuery", extraQuery);
         }
 
-        const res = await fetch(`${API_BASE_URL}/movie/explore?${params.toString()}`)
+        const res = await fetch(
+          `${API_BASE_URL}/movie/explore?${params.toString()}`,
+          { signal: controller.signal },
+        );
 
         if (!res.ok) {
           throw new Error("Explore fetch failed");
@@ -50,69 +49,64 @@ export function ExploreSection({
         const data = await res.json();
         setMovies(data.results || []);
       } catch (e) {
+        if (controller.signal.aborted) return;
         console.error("Explore fetch error:", e);
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     }
 
     fetchMovies();
+
+    return () => controller.abort();
   }, [endpoint, extraQuery]);
 
-  /* ============ RESPONSIVE LOGIC ============ */
-  const computeVisible = useCallback((width: number) => {
-    if (width >= 1400) return 6;
-    if (width >= 1200) return 5;
-    if (width >= 900) return 4;
-    if (width >= 600) return 3;
-    return 2;
-  }, []);
-
-  const recompute = useCallback(() => {
+  const updateControls = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const width = container.clientWidth;
-    const newVisible = computeVisible(width);
-
-    setVisibleCount(newVisible);
-
-    const maxStart = Math.max(0, movies.length - newVisible);
-    const curStart = startIndexRef.current;
-    const newStart = Math.min(curStart, maxStart);
-
-    if (newStart !== curStart) {
-      setStartIndex(newStart);
-      startIndexRef.current = newStart;
-    }
-
-    setTranslatePx(newStart * (CARD_WIDTH + GAP));
-  }, [computeVisible, movies.length]);
+    setCanScrollBack(container.scrollLeft > 1);
+    setCanScrollForward(
+      container.scrollLeft + container.clientWidth < container.scrollWidth - 1,
+    );
+  }, []);
 
   useEffect(() => {
-    startIndexRef.current = startIndex;
-    setTranslatePx(startIndex * (CARD_WIDTH + GAP));
-  }, [startIndex]);
+    const container = containerRef.current;
+    if (!container) return;
 
-  useEffect(() => {
-    recompute();
+    const frame = requestAnimationFrame(updateControls);
+    const resizeObserver = new ResizeObserver(updateControls);
+    resizeObserver.observe(container);
+    container.addEventListener("scroll", updateControls, { passive: true });
 
-    const ro = new ResizeObserver(recompute);
-    if (containerRef.current) ro.observe(containerRef.current);
-
-    window.addEventListener("resize", recompute);
     return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", recompute);
+      cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+      container.removeEventListener("scroll", updateControls);
     };
-  }, [recompute]);
+  }, [movies.length, updateControls]);
 
-  /* =============== CONTROLS =============== */
-  const maxStart = Math.max(0, movies.length - visibleCount);
+  const scroll = (direction: -1 | 1) => {
+    const container = containerRef.current;
+    if (!container) return;
 
-  const prev = () => setStartIndex((i) => Math.max(0, i - 1));
+    const firstCard = container.querySelector<HTMLElement>(
+      ".explore-slide, .movie-skeleton",
+    );
+    const track = container.querySelector<HTMLElement>(".explore-track");
+    const gap = track ? Number.parseFloat(getComputedStyle(track).columnGap) : 32;
+    const distance = firstCard
+      ? firstCard.getBoundingClientRect().width + gap
+      : container.clientWidth * 0.8;
 
-  const next = () => setStartIndex((i) => Math.min(maxStart, i + 1));
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)")
+      .matches
+      ? "auto"
+      : "smooth";
+
+    container.scrollBy({ left: direction * distance, behavior });
+  };
 
   /* ================= RENDER ================= */
   return (
@@ -123,15 +117,15 @@ export function ExploreSection({
 
           <div className="explore-controls">
             <button
-              onClick={prev}
-              disabled={startIndex === 0}
+              onClick={() => scroll(-1)}
+              disabled={!canScrollBack}
               aria-label="Previous"
             >
               ‹
             </button>
             <button
-              onClick={next}
-              disabled={startIndex >= maxStart}
+              onClick={() => scroll(1)}
+              disabled={!canScrollForward}
               aria-label="Next"
             >
               ›
@@ -140,14 +134,9 @@ export function ExploreSection({
         </div>
 
         <div className="explore-viewport" ref={containerRef}>
-          <div
-            className="explore-track"
-            style={{
-              transform: `translateX(-${translatePx}px)`,
-            }}
-          >
+          <div className="explore-track">
             {isLoading &&
-              Array.from({ length: visibleCount }).map((_, i) => (
+              Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="movie-skeleton" />
               ))}
 

@@ -46,3 +46,18 @@
 .results-page__back:active {
   transform: translateX(-1px);
 }
+
+@media (max-width: 768px) {
+  .results-page {
+    padding-top: calc(92px + env(safe-area-inset-top));
+    padding-bottom: calc(40px + env(safe-area-inset-bottom));
+  }
+
+  .results-page__back {
+    min-height: 42px;
+    margin-left: 16px;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}

@@ -141,6 +141,7 @@ export function HeroSection() {
                 type="submit"
                 className="hero__search-btn"
                 aria-label="Search"
+                disabled={loading || !query.trim()}
               >
                 {loading ? "Searching..." : "Search"}
               </button>
@@ -189,16 +190,21 @@ export function HeroSection() {
           <span className="chev" />
         </div> */}
 
-        {/* BLACK HOLE VIDEO (unchanged) */}
+        {/* Desktop-only black hole video */}
         <video
           className="hero__blackhole"
-          src={blackHole28}
           autoPlay
           muted
           loop
           playsInline
           aria-hidden="true"
-        />
+        >
+          <source
+            src={blackHole28}
+            media="(min-width: 769px)"
+            type="video/webm"
+          />
+        </video>
 
         <div className="hero__overlay" />
       </section>
