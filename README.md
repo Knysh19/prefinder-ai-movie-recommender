@@ -1,100 +1,99 @@
-# PreFinder
+# 🎬 PreFinder
 
-PreFinder is a production-oriented AI movie discovery experience. Describe a mood,
-plot, theme, decade, or a movie you already enjoy; the API turns that intent into
-structured preferences, discovers candidates from TMDB, and reranks them for the
-request.
+PreFinder is an AI-powered movie discovery app that helps users find films based on their mood, interests, or a simple description.
 
-## Highlights
+Instead of browsing through endless lists, users can describe what they want to watch in their own words — for example:
 
-- Natural-language movie recommendations powered by Groq and TMDB
-- Trending, top-rated, popular, and genre collections
-- Responsive movie details and local favorites
-- Rate-limited API with CORS allowlisting, bounded TTL cache, input validation, and upstream timeouts
+> “A dark psychological thriller with an unexpected ending”
 
-## Architecture
+PreFinder analyzes the request and suggests movies that match it.
+
+## Live Demo
+
+[Open PreFinder](PASTE_YOUR_VERCEL_LINK_HERE)
+
+## Features
+
+- AI-powered movie recommendations
+- Search using natural language
+- Trending, popular, and top-rated movies
+- Movie pages with detailed information
+- Genre-based collections
+- Favorites saved in the browser
+- Responsive design for desktop and mobile
+- Smooth animations and modern user interface
+
+## How It Works
+
+The user describes the type of movie they want to watch.
+
+PreFinder understands the request, finds suitable movies, and displays personalized recommendations with posters, ratings, descriptions, and additional details.
+
+Users can also explore regular movie collections without using AI.
+
+## Tech Stack
+
+- React
+- TypeScript
+- Vite
+- React Router
+- SCSS
+- Node.js
+- Express
+- Groq AI
+- TMDB
+
+## What I Worked On
+
+- Designed and developed the user interface
+- Built reusable React components
+- Added responsive layouts for different screen sizes
+- Implemented movie browsing and detailed movie pages
+- Connected the frontend with the backend
+- Integrated AI-powered recommendations
+- Added favorites and browser storage
+- Handled loading, empty, and error states
+- Deployed the frontend and backend
+
+## Running Locally
+
+Clone the repository and install the dependencies:
+
+```bash
+git clone https://github.com/Knysh19/prefinder-ai-movie-recommender.git
+cd prefinder-ai-movie-recommender
+npm install
+npm --prefix backend install
+```
+
+Start the backend:
+
+```bash
+npm --prefix backend run dev
+```
+
+Start the frontend in another terminal:
+
+```bash
+npm run dev
+```
+
+Open:
 
 ```text
-Browser (React + Vite)
-  |-- /api/recommendations --> intent analysis (Groq)
-  |                            |-- candidate discovery (TMDB)
-  |                            `-- semantic reranking (Groq)
-  `-- /api/movie/* ----------> TMDB proxy with validation and caching headers
+http://localhost:5173
 ```
 
-The backend keeps all provider credentials server-side. The frontend uses the
-deployed PreFinder API by default. `VITE_API_BASE_URL` can override that endpoint.
+## Screenshots
 
-## Local development
+Add screenshots or a short GIF of the application here.
 
-Requirements: Node.js 20+ and npm.
+## Project Purpose
 
-```bash
-npm ci
-npm --prefix backend ci
-```
+PreFinder was created as a portfolio and diploma project to demonstrate practical skills in frontend development, working with external data, backend integration, and AI-powered features.
 
-The quickest frontend-only start uses the deployed API:
+---
 
-```bash
-npm run dev
-```
-
-To run the complete stack locally, copy both example environment files, add your
-provider keys, and set `VITE_API_BASE_URL=/api` in the root `.env`. Then run the
-backend and frontend in separate terminals:
-
-```bash
-copy .env.example .env
-copy backend\.env.example backend\.env
-npm --prefix backend run dev
-npm run dev
-```
-
-Frontend: `http://localhost:5173`
-API health: `http://localhost:3001/health`
-
-## Verification
-
-```bash
-npm run lint
-npm run typecheck
-npm run build
-npm --prefix backend test
-```
-
-The same checks run in GitHub Actions.
-
-## Deployment
-
-### Frontend
-
-Build command: `npm run build`
-Output directory: `dist`
-Set `VITE_API_BASE_URL` to the public backend URL ending in `/api`.
-
-`vercel.json` includes the SPA rewrite required for direct route navigation.
-
-### Backend
-
-Root directory: `backend`
-Build command: `npm ci && npm run build`
-Start command: `npm start`
-
-Required environment variables:
-
-- `GROQ_API_KEY`
-- `TMDB_API_KEY`
-- `FRONTEND_URL` — comma-separated allowed origins
-- `PORT` — supplied by most hosting platforms
-- `RECOMMENDATION_RATE_LIMIT` — optional, defaults to 10 requests/minute/IP
-
-## Privacy and data
-
-PreFinder does not send the local profile email to a server. The profile label and
-favorites live in localStorage. Recommendation results live in sessionStorage for
-the current browser session. Movie data and images come from TMDB.
-
-## Credits
+Movie information and images are provided by TMDB.
 
 This product uses the TMDB API but is not endorsed or certified by TMDB.
