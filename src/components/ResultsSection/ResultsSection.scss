@@ -1,5 +1,7 @@
 .results {
-  margin: 0 auto;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
   padding: 10px 40px;
   color: #fff;
 }
@@ -75,26 +77,21 @@
   font-size: 14px;
 }
 
-@media (max-width: 1400px) {
-  .results__grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
+/* Keep the card spacing fixed while the columns consume the full row. */
+.results__grid {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 32px;
+  align-items: start;
+  justify-items: stretch;
 }
 
-@media (max-width: 1200px) {
-  .results__grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 900px) {
-  .results__grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.results__grid .movie-card {
+  width: 100%;
+  max-width: none;
 }
 
 @media (max-width: 600px) {
   .results__grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

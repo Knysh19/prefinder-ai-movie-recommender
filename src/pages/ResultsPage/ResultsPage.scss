@@ -1,6 +1,12 @@
 /* PAGE */
 .results-page {
+  width: 100%;
+  min-width: 0;
   padding-top: 130px; // ⬅️ єдиний контрольний відступ від верху
+}
+
+.results-page__container {
+  width: 100%;
 }
 
 /* BACK BUTTON */

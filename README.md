@@ -8,22 +8,22 @@ Instead of browsing through endless lists, users can describe what they want to 
 
 PreFinder analyzes the request and suggests movies that match it.
 
-## Live Demo
+## 🚀 Live Demo
 
-[Open PreFinder](PASTE_YOUR_VERCEL_LINK_HERE)
+[Open PreFinder](https://prefinder-ai-movie-recommender-pack.vercel.app/)
 
-## Features
+## ✨ Features
 
-- AI-powered movie recommendations
-- Search using natural language
-- Trending, popular, and top-rated movies
-- Movie pages with detailed information
-- Genre-based collections
-- Favorites saved in the browser
-- Responsive design for desktop and mobile
-- Smooth animations and modern user interface
+- 🤖 AI-powered movie recommendations
+- 💬 Search using natural language
+- 🔥 Trending, popular, and top-rated movies
+- 🎬 Movie pages with detailed information
+- 🗂️ Genre-based collections
+- ❤️ Favorites saved in the browser
+- 📱 Responsive design for desktop and mobile
+- ✨ Smooth animations and modern user interface
 
-## How It Works
+## 🧠 How It Works
 
 The user describes the type of movie they want to watch.
 
@@ -31,7 +31,7 @@ PreFinder understands the request, finds suitable movies, and displays personali
 
 Users can also explore regular movie collections without using AI.
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 - React
 - TypeScript
@@ -43,7 +43,7 @@ Users can also explore regular movie collections without using AI.
 - Groq AI
 - TMDB
 
-## What I Worked On
+## 💻 What I Worked On
 
 - Designed and developed the user interface
 - Built reusable React components
@@ -54,46 +54,3 @@ Users can also explore regular movie collections without using AI.
 - Added favorites and browser storage
 - Handled loading, empty, and error states
 - Deployed the frontend and backend
-
-## Running Locally
-
-Clone the repository and install the dependencies:
-
-```bash
-git clone https://github.com/Knysh19/prefinder-ai-movie-recommender.git
-cd prefinder-ai-movie-recommender
-npm install
-npm --prefix backend install
-```
-
-Start the backend:
-
-```bash
-npm --prefix backend run dev
-```
-
-Start the frontend in another terminal:
-
-```bash
-npm run dev
-```
-
-Open:
-
-```text
-http://localhost:5173
-```
-
-## Screenshots
-
-Add screenshots or a short GIF of the application here.
-
-## Project Purpose
-
-PreFinder was created as a portfolio and diploma project to demonstrate practical skills in frontend development, working with external data, backend integration, and AI-powered features.
-
----
-
-Movie information and images are provided by TMDB.
-
-This product uses the TMDB API but is not endorsed or certified by TMDB.
