@@ -3,9 +3,9 @@ import "./HeroSection.scss";
 import { useNavigate } from "react-router-dom";
 
 import { MicroStars } from "../MicroStars/MicroStars";
+import { SearchConstellation } from "../SearchConstellation/SearchConstellation";
 import { getRecommendations } from "../../api/recommendations";
 
-import blackHole28 from "../../../public/output_28.webm";
 import imgHorror from "../../../public/images/horror.jpg";
 import imgSciFi from "../../../public/images/sci-fi.jpg";
 import imgComedy from "../../../public/images/komedia.jpg";
@@ -91,7 +91,7 @@ export function HeroSection() {
 
   return (
     <>
-      <section className="hero" aria-label="Hero with black hole">
+      <section className="hero" aria-label="Movie recommendation search">
         <MicroStars bottomMargin={200} />
         <div className="hero__content">
           <div className="hero__left">
@@ -190,21 +190,7 @@ export function HeroSection() {
           <span className="chev" />
         </div> */}
 
-        {/* Desktop-only black hole video */}
-        <video
-          className="hero__blackhole"
-          autoPlay
-          muted
-          loop
-          playsInline
-          aria-hidden="true"
-        >
-          <source
-            src={blackHole28}
-            media="(min-width: 769px)"
-            type="video/webm"
-          />
-        </video>
+        <SearchConstellation isLoading={loading} />
 
         <div className="hero__overlay" />
       </section>

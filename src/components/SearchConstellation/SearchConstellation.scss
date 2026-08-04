@@ -1,0 +1,155 @@
+.search-constellation {
+  position: absolute;
+  z-index: 2;
+  bottom: 10vh;
+  left: 50%;
+  width: clamp(360px, 52vw, 820px);
+  max-width: calc(100% - 32px);
+  transform: translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 420ms ease;
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+}
+
+.search-constellation--active {
+  opacity: 1;
+}
+
+.search-constellation__connections path {
+  fill: none;
+  stroke: rgba(212, 175, 55, 0.32);
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+}
+
+.search-constellation__star {
+  fill: rgba(255, 243, 195, 0.93);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.search-constellation__pulse {
+  fill: none;
+  stroke: #d4af37;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-dasharray: 0.16 0.84;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  vector-effect: non-scaling-stroke;
+}
+
+.search-constellation--active .search-constellation__pulse {
+  animation: constellation-search 4.8s linear infinite;
+}
+
+.search-constellation--active .search-constellation__pulse--two {
+  animation-delay: 1.2s;
+}
+
+.search-constellation--active .search-constellation__pulse--three {
+  animation-delay: 2.4s;
+}
+
+.search-constellation--active .search-constellation__pulse--four {
+  animation-delay: 3.6s;
+}
+
+.search-constellation--active .search-constellation__star--3,
+.search-constellation--active .search-constellation__star--5,
+.search-constellation--active .search-constellation__star--8,
+.search-constellation--active .search-constellation__star--11 {
+  animation: constellation-star 4.8s ease-in-out infinite;
+}
+
+.search-constellation--active .search-constellation__star--5 {
+  animation-delay: 1.2s;
+}
+
+.search-constellation--active .search-constellation__star--8 {
+  animation-delay: 2.4s;
+}
+
+.search-constellation--active .search-constellation__star--11 {
+  animation-delay: 3.6s;
+}
+
+@keyframes constellation-search {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  4%,
+  20% {
+    opacity: 1;
+  }
+  25%,
+  100% {
+    stroke-dashoffset: -0.16;
+    opacity: 0;
+  }
+}
+
+@keyframes constellation-star {
+  0%,
+  18%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  24% {
+    opacity: 1;
+    transform: scale(2.1);
+  }
+  32% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .search-constellation {
+    bottom: 1vh;
+    width: min(94vw, 560px);
+    opacity: 0;
+  }
+
+  .search-constellation--active {
+    opacity: 0.66;
+  }
+
+  .search-constellation__star:nth-child(2n) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-constellation--active .search-constellation__pulse {
+    animation: none;
+    opacity: 0;
+  }
+
+  .search-constellation--active .search-constellation__star--3,
+  .search-constellation--active .search-constellation__star--5,
+  .search-constellation--active .search-constellation__star--8,
+  .search-constellation--active .search-constellation__star--11 {
+    animation: constellation-star-reduced 3.6s ease-in-out infinite;
+  }
+}
+
+@keyframes constellation-star-reduced {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
