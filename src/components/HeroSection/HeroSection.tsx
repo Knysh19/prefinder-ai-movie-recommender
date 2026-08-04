@@ -56,9 +56,11 @@ export function HeroSection() {
   async function handleSearch() {
     if (!query.trim()) return;
 
-    try {
-      setLoading(true);
+    const searchStartedAt = Date.now();
+    let searchSucceeded = false;
+    setLoading(true);
 
+    try {
       const data = await getRecommendations(query);
 
       sessionStorage.setItem(
@@ -66,11 +68,21 @@ export function HeroSection() {
         JSON.stringify(data.results),
       );
 
-      navigate(`/results?query=${encodeURIComponent(query)}`);
+      searchSucceeded = true;
     } catch (error) {
       console.error("Recommendation search failed", error);
     } finally {
+      const remainingTime = 2500 - (Date.now() - searchStartedAt);
+
+      if (remainingTime > 0) {
+        await new Promise((resolve) => setTimeout(resolve, remainingTime));
+      }
+
       setLoading(false);
+    }
+
+    if (searchSucceeded) {
+      navigate(`/results?query=${encodeURIComponent(query)}`);
     }
   }
 
@@ -190,9 +202,15 @@ export function HeroSection() {
           <span className="chev" />
         </div> */}
 
-        <SearchConstellation isLoading={loading} />
-
-        <div className="hero__overlay" />
+        <div
+          className={`hero__loading-overlay${loading ? " hero__loading-overlay--active" : ""}`}
+          aria-hidden="true"
+        >
+          <div className="hero__loading-backdrop" />
+          <div className="hero__loading-animation">
+            <SearchConstellation isLoading={loading} />
+          </div>
+        </div>
       </section>
     </>
   );
