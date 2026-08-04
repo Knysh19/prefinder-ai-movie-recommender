@@ -2,6 +2,9 @@
   width: 100%;
   max-width: 260px;
   cursor: pointer;
+  transition:
+    transform 280ms ease-out,
+    box-shadow 280ms ease-out;
 }
 
 .movie-card__poster {
@@ -10,6 +13,7 @@
   object-fit: cover;
   border-radius: 16px;
   display: block;
+  transition: transform 350ms ease-out;
 }
 
 .movie-card__meta {
@@ -19,6 +23,7 @@
 .movie-card__title {
   font-size: 14px;
   line-height: 1.3;
+  transition: color 280ms ease-out;
 }
 
 .movie-card__year {
@@ -38,6 +43,22 @@
 }
 .movie-card__image-wrapper {
   position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .movie-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .movie-card:hover .movie-card__poster {
+    transform: scale(1.04);
+  }
+
+  .movie-card:hover .movie-card__title {
+    color: #d4af37;
+  }
 }
 
 /* 🖤 кнопка */
@@ -145,6 +166,10 @@
 }
 
 @media (max-width: 768px) {
+  .movie-card__image-wrapper {
+    border-radius: 12px;
+  }
+
   .movie-card__poster {
     border-radius: 12px;
   }
