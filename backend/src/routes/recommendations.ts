@@ -13,6 +13,7 @@ type RecommendationPayload = {
 };
 
 const router = Router();
+const RECOMMENDATION_LIMIT = 20;
 const cache = new TTLCache<RecommendationPayload>(200, 6 * 60 * 60 * 1000);
 const inFlight = new Map<string, Promise<RecommendationPayload>>();
 
@@ -21,7 +22,7 @@ async function buildRecommendations(query: string): Promise<RecommendationPayloa
   const candidates = await getMoviesFromTMDB(preferences);
   if (!candidates.length) return { preferences, results: [] };
   const ranked = await rerankMoviesByQuery(query, candidates);
-  return { preferences, results: ranked.slice(0, 15) };
+  return { preferences, results: ranked.slice(0, RECOMMENDATION_LIMIT) };
 }
 
 router.post("/", async (req, res) => {
