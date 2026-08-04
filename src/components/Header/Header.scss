@@ -180,6 +180,21 @@ $line: #2e2e2e;
   white-space: nowrap;
 }
 
+.nav__auth-loading {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-top-color: $gold-main;
+  border-radius: 50%;
+  animation: nav-auth-spin 0.7s linear infinite;
+}
+
+@keyframes nav-auth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .nav-toggle {
   display: none;
 }

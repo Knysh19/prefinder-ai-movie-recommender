@@ -39,3 +39,11 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+.auth-route-status {
+  min-height: 100vh;
+  margin: 0;
+  padding-top: 120px;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+}

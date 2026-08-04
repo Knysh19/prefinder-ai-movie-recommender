@@ -1,7 +1,8 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { getMovieFull } from "../../api/movie";
 import { useFavorites } from "../../context/FavoritesContext";
+import { useAuth } from "../../context/AuthContext";
 import "./MovieDetailsPage.scss";
 
 type Genre = { id: number; name: string };
@@ -35,8 +36,10 @@ type MovieFullResponse = {
 export function MovieDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { user } = useAuth();
 
   const [data, setData] = useState<MovieFullResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -83,8 +86,15 @@ export function MovieDetailsPage() {
 
             {/* ❤️ FAVORITES — ПРАВИЛЬНО */}
             <button
+              type="button"
               className={`md-favorite ${favorite ? "active" : ""}`}
-              onClick={() => toggleFavorite(movie)}
+              onClick={() => {
+                if (!user) {
+                  navigate("/login", { state: { from: location } });
+                  return;
+                }
+                toggleFavorite(movie);
+              }}
             >
               {favorite ? "❤️ Added to favorites" : "🤍 Add to favorites"}
             </button>

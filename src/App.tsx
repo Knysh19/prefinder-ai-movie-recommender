@@ -8,6 +8,7 @@ import { MovieDetailsPage } from "./pages/MovieDetailsPage/MovieDetailsPage";
 import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { ExplorePage } from "./pages/ExplorePage/ExplorePage";
 import { FavoritesPage } from "./pages/FavoritesPage/FavoritesPage";
+import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
 
 export const App: React.FC = () => {
   return (
@@ -15,7 +16,14 @@ export const App: React.FC = () => {
       <Header />
 
       <Routes>
-        <Route path="/favorites" element={<FavoritesPage />} />
+        <Route
+          path="/favorites"
+          element={
+            <ProtectedRoute>
+              <FavoritesPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/" element={<HeroSection />} />
         <Route path="/results" element={<ResultsPage />} />
@@ -25,14 +33,3 @@ export const App: React.FC = () => {
     </div>
   );
 };
-
-{
-  /* <Route
-  path="/results"
-  element={
-    <ProtectedRoute>
-      <ResultsPage />
-    </ProtectedRoute>
-  }
-/> */
-}

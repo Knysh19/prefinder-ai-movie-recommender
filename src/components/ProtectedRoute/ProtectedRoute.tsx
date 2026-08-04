@@ -1,10 +1,17 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import type { ReactElement } from "react";
-import { isAuthenticated } from "../../utils/auth";
+import { useAuth } from "../../context/AuthContext";
 
 export function ProtectedRoute({ children }: { children: ReactElement }) {
-  if (!isAuthenticated()) {
-    return <Navigate to="/login" replace />;
+  const { user, isLoading } = useAuth();
+  const location = useLocation();
+
+  if (isLoading) {
+    return <p className="auth-route-status">Checking your session…</p>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
   return children;

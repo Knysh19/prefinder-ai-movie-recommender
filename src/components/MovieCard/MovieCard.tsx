@@ -1,6 +1,7 @@
 import "./MovieCard.scss";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useFavorites } from "../../context/FavoritesContext";
+import { useAuth } from "../../context/AuthContext";
 
 export type Movie = {
   id: number;
@@ -17,7 +18,9 @@ type Props = {
 
 export function MovieCard({ movie }: Props) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { user } = useAuth();
 
   const imagePath = movie.poster_path || movie.backdrop_path;
   const favorite = isFavorite(movie.id);
@@ -43,9 +46,18 @@ export function MovieCard({ movie }: Props) {
         <button
           className={`movie-card__favorite ${favorite ? "active" : ""}`}
           onClick={(e) => {
-            e.stopPropagation(); // 🔥 КРИТИЧНО
+            e.stopPropagation();
+            if (!user) {
+              navigate("/login", { state: { from: location } });
+              return;
+            }
             toggleFavorite(movie);
           }}
+          aria-label={
+            favorite
+              ? `Remove ${movie.title} from favorites`
+              : `Add ${movie.title} to favorites`
+          }
         >
           {favorite ? "❤️" : "🤍"}
         </button>

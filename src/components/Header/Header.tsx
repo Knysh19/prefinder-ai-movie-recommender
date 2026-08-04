@@ -3,15 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Header.scss";
 import logoImage from "../../../public/images/ilustr.png";
 
-import {
-  isAuthenticated,
-  getAuthUser,
-  logout,
-} from "../../utils/auth";
+import { useAuth } from "../../context/AuthContext";
 
 export function Header() {
   const navigate = useNavigate();
-  const user = getAuthUser();
+  const { user, isLoading, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -25,11 +21,14 @@ export function Header() {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [menuOpen]);
 
-  function handleLogout() {
+  async function handleLogout() {
     setMenuOpen(false);
-    logout();
+    const { error } = await signOut();
+    if (error) {
+      console.error("Sign out failed", error);
+      return;
+    }
     navigate("/");
-    window.location.reload(); // просте оновлення стану
   }
 
   return (
@@ -75,9 +74,11 @@ export function Header() {
             ❤️ Favorites
           </Link>
 
-          {isAuthenticated() ? (
+          {isLoading ? (
+            <span className="nav__auth-loading" aria-label="Checking session" />
+          ) : user ? (
             <div className="nav__user">
-              <span className="nav__email">{user.email}</span>
+              <span className="nav__email">{user.email ?? "Account"}</span>
               <button
                 type="button"
                 className="nav__btn nav__btn--primary"

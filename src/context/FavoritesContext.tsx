@@ -1,11 +1,13 @@
 import {
   createContext,
+  useCallback,
   useContext,
-  useEffect,
+  useMemo,
   useState,
 } from "react";
 import type { ReactNode } from "react";
 import type { Movie } from "../components/MovieCard/MovieCard";
+import { useAuth } from "./AuthContext";
 
 type FavoritesContextType = {
   favorites: Movie[];
@@ -17,41 +19,65 @@ const FavoritesContext = createContext<FavoritesContextType | null>(null);
 
 const STORAGE_KEY = "favoriteMovies";
 
+function readFavorites(storageKey: string): Movie[] {
+  const stored =
+    localStorage.getItem(storageKey) ??
+    (storageKey === `${STORAGE_KEY}:guest`
+      ? localStorage.getItem(STORAGE_KEY)
+      : null);
+  if (!stored) return [];
+
+  try {
+    const parsed: unknown = JSON.parse(stored);
+    return Array.isArray(parsed) ? (parsed as Movie[]) : [];
+  } catch (error) {
+    console.error("Invalid favorites in localStorage", error);
+    localStorage.removeItem(storageKey);
+    return [];
+  }
+}
+
 export function FavoritesProvider({ children }: { children: ReactNode }) {
-  const [favorites, setFavorites] = useState<Movie[]>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-
-    if (!stored) return [];
-
-    try {
-      const parsed: unknown = JSON.parse(stored);
-      return Array.isArray(parsed) ? (parsed as Movie[]) : [];
-    } catch (error) {
-      console.error("Invalid favorites in localStorage", error);
-      localStorage.removeItem(STORAGE_KEY);
-      return [];
-    }
+  const { user } = useAuth();
+  const storageKey = user ? `${STORAGE_KEY}:${user.id}` : `${STORAGE_KEY}:guest`;
+  const [favoritesByKey, setFavoritesByKey] = useState<
+    Record<string, Movie[]>
+  >(() => {
+    const guestKey = `${STORAGE_KEY}:guest`;
+    return { [guestKey]: readFavorites(guestKey) };
   });
+  const favorites = useMemo(
+    () => favoritesByKey[storageKey] ?? readFavorites(storageKey),
+    [favoritesByKey, storageKey],
+  );
 
-  // sync to localStorage
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
-  }, [favorites]);
+  const isFavorite = useCallback(
+    (id: number) => favorites.some((movie) => movie.id === id),
+    [favorites],
+  );
 
-  const isFavorite = (id: number) => favorites.some((movie) => movie.id === id);
+  const toggleFavorite = useCallback(
+    (movie: Movie) => {
+      const nextFavorites = favorites.some((item) => item.id === movie.id)
+        ? favorites.filter((item) => item.id !== movie.id)
+        : [...favorites, movie];
 
-  const toggleFavorite = (movie: Movie) => {
-    setFavorites((prev) =>
-      prev.some((m) => m.id === movie.id)
-        ? prev.filter((m) => m.id !== movie.id)
-        : [...prev, movie],
-    );
-  };
+      localStorage.setItem(storageKey, JSON.stringify(nextFavorites));
+      setFavoritesByKey((current) => ({
+        ...current,
+        [storageKey]: nextFavorites,
+      }));
+    },
+    [favorites, storageKey],
+  );
+
+  const value = useMemo(
+    () => ({ favorites, isFavorite, toggleFavorite }),
+    [favorites, isFavorite, toggleFavorite],
+  );
 
   return (
-    <FavoritesContext.Provider
-      value={{ favorites, isFavorite, toggleFavorite }}
-    >
+    <FavoritesContext.Provider value={value}>
       {children}
     </FavoritesContext.Provider>
   );

@@ -131,10 +131,61 @@
     transform: translateY(-2px);
     box-shadow: 0 14px 45px rgba(255, 183, 3, 0.65);
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.login-message {
+  margin: -8px 0 -6px;
+  padding: 10px 12px;
+  border: 1px solid;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.45;
+
+  &.is-error {
+    color: #ff9b9b;
+    background: rgba(255, 73, 73, 0.08);
+    border-color: rgba(255, 73, 73, 0.24);
+  }
+
+  &.is-success {
+    color: #a9efbd;
+    background: rgba(70, 200, 110, 0.08);
+    border-color: rgba(70, 200, 110, 0.24);
+  }
+}
+
+.login-switch {
+  display: block;
+  width: 100%;
+  margin-top: 22px;
+  padding: 8px;
+  color: #ffd27d;
+  background: transparent;
+  border: 0;
+  font-size: 13px;
+  text-align: center;
+  box-shadow: none;
+}
+
+.login-switch:hover {
+  color: #ffb703;
+  border-color: transparent;
+}
+
+.login-switch:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .login-footer {
-  margin-top: 32px;
+  margin-top: 16px;
   text-align: center;
   font-size: 12px;
   opacity: 0.45;
